@@ -1,5 +1,6 @@
 #!/bin/bash
 
+debug=false
 ARGS=$(getopt -a --options di: --long "debug,input:" -- "$@")
 eval set -- "$ARGS"
 
@@ -19,6 +20,9 @@ while true; do
   esac
 done
 
+echo "debug=$debug"
+echo "input=$input"
+
 # If no input file is specified, use file called 20k.txt which is found at the following repository
 # https://github.com/first20hours/google-10000-english
 if [ -z $input ]
@@ -32,13 +36,14 @@ cat $input | grep -E '^.{5}$' > tmp
 echo "Let's solve a Wordle"
 
 lastword='adieu'
+wordindex=1
 done=0
 posincorrect=('0' '0' '0' '0' '0') # this has a longer lifespan than results remembered inside the scope of the loop below as we want it to be remembered for subsequent guesses
 
 while [ $done = 0 ]
 do
 	echo ""
-	echo "Try \"$lastword\" and let me know the result (? for help, q to quit)"
+	echo "Try \"$lastword\" and let me know the result (? for help, q to quit, d for different word)"
 
 	read -r rslt
 	if [ $rslt = '?' ]
@@ -66,6 +71,14 @@ do
 		done=1
 		echo 'Yay! We solved the wordle: '$lastword
 		break
+	fi
+	
+	if [ $rslt = 'd' ]
+	then
+		echo "I agree, '$lastword' is a dumb choice. Let's pick another word."
+		wordindex=$((wordindex+1))
+		lastword=$(head -n $wordindex tmp | tail -n 1)
+		continue
 	fi
 
 	# check if rslt is in correct format
@@ -143,9 +156,7 @@ do
 	regex_posincorrect="$regex_posincorrect$"
 	regex_posincorrect=$(echo $regex_posincorrect | sed 's/0//g')
 	
-	if [ -d "$debug" ]
-	then
-	if [ $debug = 'debug' ]
+	if [ $debug = 'true' ]
 	then
 		echo '          lastword: '$lastword
 		echo '              rslt: '$rslt
@@ -157,12 +168,12 @@ do
 		echo '  regex_poscorrect: '$regex_poscorrect
 		echo 'regex_posincorrect: '$regex_posincorrect
 	fi
-	fi
 	
 	cat tmp | grep -E "$regex_invalid" | grep -Po "$regex_valid" | grep -E "$regex_poscorrect" | grep -E "$regex_posincorrect$" > tmp2 # $regex_valid is a Pearl style regex, hence the -Po
 	cp tmp2 tmp
 	
-	lastword=$(head -n 1 tmp)
+	wordindex=1
+	lastword=$(head -n $wordindex tmp | tail -n 1)
 	
 	if [ -z $lastword ]
 	then
