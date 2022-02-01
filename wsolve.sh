@@ -82,7 +82,7 @@ do
 	fi
 
 	# check if rslt is in correct format
-	rslt=$(echo $rslt | egrep '^[\+-x]{5}$')
+	rslt=$(echo $rslt | grep -E '^[\+-x]{5}$')
 	if [ -z $rslt ]
 	then
 		echo "Sorry, that result makes no sense"
@@ -169,7 +169,7 @@ do
 		echo 'regex_posincorrect: '$regex_posincorrect
 	fi
 	
-	cat tmp | grep -E "$regex_invalid" | grep -Po "$regex_valid" | grep -E "$regex_poscorrect" | grep -E "$regex_posincorrect$" > tmp2 # $regex_valid is a Pearl style regex, hence the -Po
+	cat tmp | grep -E "$regex_invalid" | grep -Po "$regex_valid" | grep -E "$regex_poscorrect" | grep -E "$regex_posincorrect$" > tmp2 # $regex_valid is a Perl style regex, hence the -Po
 	cp tmp2 tmp
 	
 	wordindex=1
