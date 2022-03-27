@@ -23,11 +23,10 @@ done
 echo "debug=$debug"
 echo "input=$input"
 
-# If no input file is specified, use file called 20k.txt which is found at the following repository
-# https://github.com/first20hours/google-10000-english
+# If no input file is specified, use file called wordlewords.txt
 if [ -z $input ]
 then
-	input="20k.txt"
+	input="wordlewords.txt"
 fi
 
 # whittle input file down to only 5 letter words
