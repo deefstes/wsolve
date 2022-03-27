@@ -112,7 +112,6 @@ do
 		# build up list of valid characters and populate positionally incorrect character array
 		if [ ${p[$i]} = '-' ]
 		then
-			#valid=$(echo "$valid(?=.*$(echo $lastword | head -c $((i+1)) | tail -c 1))")
 			valid="$valid$(echo $lastword | head -c $((i+1)) | tail -c 1)"
 			posincorrect[$i]="${posincorrect[$i]}$(echo $lastword | head -c $((i+1)) | tail -c 1)"
 		fi
@@ -121,7 +120,6 @@ do
 		if [ ${p[$i]} = '+' ]
 		then
 			poscorrect=$(echo $poscorrect$(echo $lastword | head -c $((i+1)) | tail -c 1))
-			#valid=$(echo "$valid(?=.*$(echo $lastword | head -c $((i+1)) | tail -c 1))")
 			valid="$valid$(echo $lastword | head -c $((i+1)) | tail -c 1)"
 		else
 			poscorrect=$(echo $poscorrect'.')
